@@ -1,7 +1,7 @@
 MIT License
 
 Copyright 2017 Foundry 376, LLC
-Copyright (c) 2024 Shane Lx
+Copyright (c) 2024 Shane Lx @ miniEcho
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
