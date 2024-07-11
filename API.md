@@ -4,7 +4,7 @@ This API provides endpoints for generating blog posts based on a given URL. It s
 
 ## Base URL
 
-The base URL for all API endpoints is: `http://localhost:3000`
+The base URL for all API endpoints is: `http://autoblog.miniecho.com:3000`, or your own URL if you choose to host this yourself.
 
 ## Authentication
 
