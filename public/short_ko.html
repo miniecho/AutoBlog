@@ -1,32 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoBlog Generator</title>
-    <link href="/styles.css" rel="stylesheet">
-</head>
-<body>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/short.html">Short</a>
-        <a href="/long.html">Long</a>
-        <a href="/short_ko.html">Short KO</a>
-    </nav>
-    <div class="container">
-        <h1>Short Korean AutoBlog</h1>
-        <form id="blog-form" hx-get="/short_ko" hx-target="#result" hx-swap="innerHTML" hx-headers="{ 'Cookie': 'OPENAI_KEY=' + document.cookie.match(/(?<=OPENAI_KEY=)[^;]*/) }">
-            <label for="url">Enter URL:</label>
-            <input type="text" id="url" name="url" placeholder="https://example.com" required>
-            <button type="submit" onclick="document.getElementById('loading').classList.remove('hidden');">Generate Blog</button>
-        </form>
-        <div id="result">
-            <div id="loading" class="hidden">
-                <i class="animate-spin"></i>
-            </div>
-        </div>
-    </div>
-    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
-    <script src="/script.js"></script>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>AutoBlog Generator</title>
+		<link href="/styles.css" rel="stylesheet" />
+	</head>
+	<body>
+		<nav>
+			<a href="/">Home</a>
+			<a href="/short.html">Short</a>
+			<a href="/long.html">Long</a>
+			<a href="/short_ko.html">Short KO</a>
+		</nav>
+		<div class="container">
+			<h1>Short Korean AutoBlog</h1>
+			<form
+				id="blog-form"
+				hx-get="/short_ko"
+				hx-target="#result"
+				hx-swap="innerHTML"
+				hx-headers="{ 'Cookie': 'OPENAI_KEY=' + document.cookie.match(/(?<=OPENAI_KEY=)[^;]*/) }"
+			>
+				<label for="url">Enter URL:</label>
+				<input
+					type="text"
+					id="url"
+					name="url"
+					placeholder="https://example.com"
+					required
+				/>
+				<button
+					type="submit"
+					onclick="document.getElementById('loading').classList.remove('hidden');"
+				>
+					Generate Blog
+				</button>
+			</form>
+			<div id="result">
+				<div id="loading" class="hidden">
+					<i class="animate-spin"></i>
+				</div>
+			</div>
+			<div id="copyright" align="center">
+				&copy; 2024 autoblog.ixtj.dev - All Rights Reserved.
+			</div>
+		</div>
+		<script src="https://unpkg.com/htmx.org@2.0.0"></script>
+		<script src="/script.js"></script>
+	</body>
 </html>
