@@ -1,0 +1,25 @@
+{
+  "name": "autoblog",
+  "version": "1.0.0",
+  "description": "AutoBlog is a web service designed to automate content creation by scraping web pages and generating blog posts based on the extracted information.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shane Lx",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "htmx.org": "^2.0.0",
+    "marked": "^13.0.2",
+    "node-fetch": "^3.3.2",
+    "textract": "^2.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
