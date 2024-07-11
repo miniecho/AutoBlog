@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { marked } from "marked";
 import cookieParser from "cookie-parser";
+import timeout from "connect-timeout";
 
 dotenv.config({ path: "./.env" });
 
@@ -19,9 +20,10 @@ const __dirname = path.dirname(__filename);
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Middleware to parse JSON and Cookies
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
+app.use(timeout('5m')); // Set timeout to 10 minutes
 
 // Route to handle URL-based blog generation
 app.get("/short", async (req, res) => {
