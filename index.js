@@ -5,6 +5,7 @@ import textract from "textract";
 import path from "path";
 import { fileURLToPath } from "url";
 import { marked } from "marked";
+import cookieParser from "cookie-parser";
 
 dotenv.config({ path: "./.env" });
 
@@ -18,8 +19,9 @@ const __dirname = path.dirname(__filename);
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Middleware to parse JSON
+// Middleware to parse JSON and Cookies
 app.use(express.json());
+app.use(cookieParser());
 
 // Route to handle URL-based blog generation
 app.get("/short", async (req, res) => {
@@ -27,6 +29,13 @@ app.get("/short", async (req, res) => {
 
 	if (!userURL) {
 		return res.status(400).json({ error: "URL parameter is required" });
+	}
+
+	if (!req.cookies || !req.cookies.OPENAI_KEY) {
+		console.log("NO COOKIE");
+		return res
+			.status(200)
+			.send("<h1>You don't have an API key in your cookie!</h1>");
 	}
 
 	try {
@@ -90,7 +99,7 @@ INPUT:`;
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+					Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
 				},
 				body: postData,
 			});
@@ -122,6 +131,13 @@ app.get("/long", async (req, res) => {
 
 	if (!userURL) {
 		return res.status(400).json({ error: "URL parameter is required" });
+	}
+
+	if (!req.cookies || !req.cookies.OPENAI_KEY) {
+		console.log("NO COOKIE");
+		return res
+			.status(200)
+			.send("<h1>You don't have an API key in your cookie!</h1>");
 	}
 
 	try {
@@ -237,7 +253,7 @@ INPUT:`;
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+						Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
 					},
 					body: postData,
 				});
@@ -270,6 +286,13 @@ app.get("/short_ko", async (req, res) => {
 
 	if (!userURL) {
 		return res.status(400).json({ error: "URL parameter is required" });
+	}
+
+	if (!req.cookies || !req.cookies.OPENAI_KEY) {
+		console.log("NO COOKIE");
+		return res
+			.status(200)
+			.send("<h1>You don't have an API key in your cookie!</h1>");
 	}
 
 	try {
@@ -333,7 +356,7 @@ INPUT:`;
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+					Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
 				},
 				body: postData,
 			});
@@ -369,7 +392,7 @@ INPUT:`;
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
-								Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+								Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
 							},
 							body: postData,
 						}

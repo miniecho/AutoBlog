@@ -12,11 +12,10 @@
         <a href="/short.html">Short</a>
         <a href="/long.html">Long</a>
         <a href="/short_ko.html">Short KO</a>
-        <a href="/long_ko.html">Long KO</a>
     </nav>
     <div class="container">
         <h1>Long AutoBlog</h1>
-        <form id="blog-form" hx-get="/long" hx-target="#result" hx-swap="innerHTML">
+        <form id="blog-form" hx-get="/long" hx-target="#result" hx-swap="innerHTML" hx-headers="{ 'Cookie': 'OPENAI_KEY=' + document.cookie.match(/(?<=OPENAI_KEY=)[^;]*/) }">
             <label for="url">Enter URL:</label>
             <input type="text" id="url" name="url" placeholder="https://example.com" required>
             <button type="submit" onclick="document.getElementById('loading').classList.remove('hidden');">Generate Blog</button>
