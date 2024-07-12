@@ -1,0 +1,205 @@
+openapi: 3.0.1
+info:
+  title: AutoBlog API
+  description: This API provides endpoints for generating blog posts based on a given URL. It supports both short and long-form blog posts in English and Korean.
+  version: 1.0.0
+servers:
+  - url: https://autoblog.miniecho.com
+    description: Default server
+paths:
+  /short:
+    get:
+      summary: Generate Short Blog Post
+      description: Generates a short-form blog post based on the content of a given URL.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to generate the blog post from.
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<p>Your generated short blog post</p>'
+        '400':
+          description: URL parameter is required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'URL parameter is required'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Internal server error'
+        default:
+          description: Missing API key
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<h1>You don't have an API key in your cookie!</h1>"
+
+  /long:
+    get:
+      summary: Generate Long Blog Post
+      description: Generates a long-form blog post based on the content of a given URL.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to generate the blog post from.
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<p>Your generated long blog post</p>'
+        '400':
+          description: URL parameter is required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'URL parameter is required'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Internal server error'
+        default:
+          description: Missing API key
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<h1>You don't have an API key in your cookie!</h1>"
+
+  /short_ko:
+    get:
+      summary: Generate Short Blog Post in Korean
+      description: Generates a short-form blog post in Korean based on the content of a given URL.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to generate the blog post from.
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<p>생성된 짧은 블로그 게시물</p>'
+        '400':
+          description: URL parameter is required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'URL parameter is required'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Internal server error'
+        default:
+          description: Missing API key
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<h1>You don't have an API key in your cookie!</h1>"
+
+  /long_ko:
+    get:
+      summary: Generate Long Blog Post in Korean
+      description: Generates a long-form blog post in Korean based on the content of a given URL.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to generate the blog post from.
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<p>생성된 긴 블로그 게시물</p>'
+        '400':
+          description: URL parameter is required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'URL parameter is required'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Internal server error'
+        default:
+          description: Missing API key
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<h1>You don't have an API key in your cookie!</h1>"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: OPENAI_KEY
+security:
+  - cookieAuth: []
