@@ -78,7 +78,7 @@ Ensure you follow ALL these instructions when creating your output.
 INPUT:`;
 
 		const postData = JSON.stringify({
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			messages: [
 				{
 					role: "system",
@@ -231,7 +231,7 @@ Ensure you follow ALL these instructions when creating your output.
 INPUT:`;
 
 			const postData = JSON.stringify({
-				model: "gpt-3.5-turbo",
+				model: "gpt-4o-mini",
 				messages: [
 					{
 						role: "system",
@@ -333,7 +333,7 @@ Ensure you follow ALL these instructions when creating your output.
 INPUT:`;
 
 		const postData = JSON.stringify({
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			messages: [
 				{
 					role: "system",
@@ -366,7 +366,7 @@ INPUT:`;
 				resExtract.choices[0].message
 			) {
 				const postData = JSON.stringify({
-					model: "gpt-3.5-turbo",
+					model: "gpt-4o-mini",
 					messages: [
 						{
 							role: "system",
@@ -529,7 +529,7 @@ Ensure you follow ALL these instructions when creating your output.
 INPUT:`;
 
 			const postData = JSON.stringify({
-				model: "gpt-3.5-turbo",
+				model: "gpt-4o-mini",
 				messages: [
 					{
 						role: "system",
@@ -573,7 +573,7 @@ INPUT:`;
 		
 		let blogPostTL = "";
 		const postData = JSON.stringify({
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			messages: [
 				{
 					role: "system",
