@@ -17,20 +17,20 @@
 			<a href="/long_ko.html">Long KO</a>
 		</nav>
 		<div class="container">
-			<h1>Long Korean AutoBlog</h1>
+			<h1>PubMed AutoBlog</h1>
 			<form
 				id="blog-form"
-				hx-get="/long_ko"
+				hx-get="/pubmed"
 				hx-target="#result"
 				hx-swap="innerHTML"
 				hx-headers="{ 'Cookie': 'OPENAI_KEY=' + document.cookie.match(/(?<=OPENAI_KEY=)[^;]*/) }"
 			>
-				<label for="url">Enter URL:</label>
+				<label for="url">Enter Article ID which is in the URL:</label>
 				<input
 					type="text"
 					id="url"
 					name="url"
-					placeholder="https://example.com"
+					placeholder="Article ID"
 					required
 				/>
 				<button

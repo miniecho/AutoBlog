@@ -4,8 +4,8 @@ import fetch from "node-fetch";
 import textract from "textract";
 import path from "path";
 import { fileURLToPath } from "url";
-import { marked } from "marked";
 import cookieParser from "cookie-parser";
+import xml2js from "xml2js";
 
 dotenv.config({ path: "./.env" });
 
@@ -118,7 +118,7 @@ INPUT:`;
 			console.error(error);
 		}
 
-		res.status(200).send(marked(blogPost));
+		res.status(200).send(blogPost.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });
@@ -272,7 +272,7 @@ INPUT:`;
 			}
 		}
 
-		res.status(200).send(marked(blogPost));
+		res.status(200).send(blogPost.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });
@@ -416,7 +416,7 @@ INPUT:`;
 			console.error(error);
 		}
 
-		res.status(200).send(marked(blogPost));
+		res.status(200).send(blogPost.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });
@@ -568,9 +568,8 @@ INPUT:`;
 			} catch (error) {
 				console.error(error);
 			}
-
 		}
-		
+
 		let blogPostTL = "";
 		const postData = JSON.stringify({
 			model: "gpt-4o-mini",
@@ -617,10 +616,130 @@ INPUT:`;
 			console.error(error);
 		}
 
-		res.status(200).send(marked(blogPostTL));
+		res.status(200).send(blogPostTL.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });
+	}
+});
+
+app.get("/pubmed", async (req, res) => {
+	const userURL = req.query.url;
+
+	if (!userURL) {
+		return res.status(400).json({ error: "URL parameter is required" });
+	}
+
+	if (!req.cookies || !req.cookies.OPENAI_KEY) {
+		return res
+			.status(200)
+			.send("<h1>You don't have an API key in your cookie!</h1>");
+	}
+
+	try {
+		// Construct the efetch URL
+		const efetchURL = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=${userURL}&retmode=xml`;
+
+		// Fetch XML response from efetch endpoint
+		const response = await fetch(efetchURL);
+		if (!response.ok) {
+			res.status(200).send("<h1>Failed to fetch XML from PubMed</h1>");
+		}
+		const xml = await response.text();
+
+		// Parse XML to JSON
+		const parser = new xml2js.Parser();
+		const result = await parser.parseStringPromise(xml);
+
+		// Extract AbstractText
+		const abstractText =
+			result.PubmedArticleSet.PubmedArticle[0].MedlineCitation[0].Article[0]
+				.Abstract[0].AbstractText[0]._;
+
+		// Define the prompt chain
+		const promptChain = `# IDENTITY and PURPOSE
+
+You are an expert content summarizer. You take content in and output a Markdown formatted summary using the format below.
+
+Take a deep breath and think step by step about how to best accomplish this goal using the following steps.
+
+# OUTPUT SECTIONS
+
+- Combine all of your understanding of the content into a single, 20-word sentence in a section called SUMMARY:.
+- Output the 10 most important points of the content as a list with no more than 15 words per point into a section called KEY FINDINGS:.
+- Output a list of the 5 best takeaways from the content in a section called CONCLUSION:.
+- Output a list keywords that illustrate a suitable stock image for this content. Keywords should be put in a single line separated by comma, and be put under a section called KEYWORDS:.
+
+# OUTPUT INSTRUCTIONS
+
+- Create the output using the formatting above.
+- Use Markdown's heaading 2 (##) for section titles.
+- You only output human readable Markdown.
+- Output numbered lists, not bullets.
+- Do not output warnings or notes—just the requested sections.
+- Do not repeat items in the output sections.
+- Do not start items with the same opening words.
+
+Ensure you follow ALL these instructions when creating your output.
+
+# INPUT
+
+INPUT:`;
+
+		// Create post data
+		const postData = JSON.stringify({
+			model: "gpt-4o-mini",
+			messages: [
+				{
+					role: "system",
+					content: promptChain,
+				},
+				{
+					role: "user",
+					content: abstractText,
+				},
+			],
+			temperature: 0.3,
+			user: "AutoBlog Test",
+		});
+
+		// Fetch completion from OpenAI
+		const openAIResponse = await fetch(
+			"https://api.openai.com/v1/chat/completions",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
+				},
+				body: postData,
+			}
+		);
+
+		if (!openAIResponse.ok) {
+			res.status(200).send("Failed to fetch from OpenAI");
+		}
+
+		const openAIResult = await openAIResponse.json();
+
+		let blogPost = "";
+
+		if (
+			openAIResult.choices &&
+			openAIResult.choices[0] &&
+			openAIResult.choices[0].message
+		) {
+			blogPost = openAIResult.choices[0].message.content.trim();
+		} else {
+			console.error("Unexpected response structure", openAIResult);
+			return res.status(500).json({ error: "Unexpected response from OpenAI" });
+		}
+
+		// Send Markdown response
+		res.status(200).send(blogPost.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
+	} catch (error) {
+		console.error("Error fetching or processing data:", error);
+		res.status(500).json({ error: "Internal Server Error" });
 	}
 });
 
