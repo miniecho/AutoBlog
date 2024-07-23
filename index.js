@@ -743,6 +743,110 @@ INPUT:`;
 	}
 });
 
+app.get("/summary", async (req, res) => {
+	const userURL = req.query.url;
+
+	if (!userURL) {
+		return res.status(400).json({ error: "URL parameter is required" });
+	}
+
+	if (!req.cookies || !req.cookies.OPENAI_KEY) {
+		return res
+			.status(200)
+			.send("<h1>You don't have an API key in your cookie!</h1>");
+	}
+
+	try {
+		let blogPost = "";
+
+		// Scrape webpage
+		const urlContent = await new Promise((resolve, reject) => {
+			textract.fromUrl(userURL, (error, text) => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve(text);
+				}
+			});
+		});
+
+		const promptChain = `# IDENTITY and PURPOSE
+
+You are an expert content summarizer. You take content in and output a Markdown formatted summary using the format below.
+
+Take a deep breath and think step by step about how to best accomplish this goal using the following steps.
+
+# OUTPUT SECTIONS
+
+- Combine all of your understanding of the content into a single, 20-word sentence in a section called SUMMARY:.
+- Output the 10 most important points of the content as a list with no more than 15 words per point into a section called KEY FINDINGS:.
+- Output a list of the 5 best takeaways from the content in a section called CONCLUSION:.
+- Output a list keywords that illustrate a suitable stock image for this content. Keywords should be put in a single line separated by comma, and be put under a section called KEYWORDS:.
+
+# OUTPUT INSTRUCTIONS
+
+- Create the output using the formatting above.
+- Use Markdown's heaading 2 (##) for section titles.
+- You only output human readable Markdown.
+- Output numbered lists, not bullets.
+- Do not output warnings or notes—just the requested sections.
+- Do not repeat items in the output sections.
+- Do not start items with the same opening words.
+
+Ensure you follow ALL these instructions when creating your output.
+
+# INPUT
+
+INPUT:`;
+
+		const postData = JSON.stringify({
+			model: "gpt-4o-mini",
+			messages: [
+				{
+					role: "system",
+					content: promptChain,
+				},
+				{
+					role: "user",
+					content: urlContent,
+				},
+			],
+			temperature: 0.3,
+			user: "AutoBlog Test",
+		});
+
+		try {
+			const response = await fetch("https://api.openai.com/v1/chat/completions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${req.cookies.OPENAI_KEY}`,
+				},
+				body: postData,
+			});
+
+			const resExtract = await response.json();
+
+			if (
+				resExtract.choices &&
+				resExtract.choices[0] &&
+				resExtract.choices[0].message
+			) {
+				blogPost += "\n" + resExtract.choices[0].message.content.trim();
+			} else {
+				console.error("Unexpected response structure", resExtract);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+
+		res.status(200).send(blogPost.replace(/(.+)(\n|$)/g, "$1<br /><br />"));
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+});
+
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
